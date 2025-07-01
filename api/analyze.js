@@ -1,6 +1,7 @@
 const { default: chromium } = require('@sparticuz/chromium-min');
 const puppeteer = require('puppeteer-core');
 const { createWorker } = require('tesseract.js');
+const path = require('node:path');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
