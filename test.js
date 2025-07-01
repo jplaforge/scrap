@@ -1,21 +1,26 @@
+const assert = require('assert');
 const handler = require('./api/analyze');
 
-const req = {
-  method: 'POST',
-  body: { url: 'https://example.com' }
-};
+async function runTests() {
+  const res = {
+    status(code) { this.statusCode = code; return this; },
+    json(body) { this.body = body; }
+  };
 
-const res = {
-  status(code) {
-    this.statusCode = code;
-    return this;
-  },
-  json(obj) {
-    console.log('status', this.statusCode);
-    console.log(obj);
-  }
-};
+  // Non-POST method
+  await handler({ method: 'GET' }, res);
+  assert.strictEqual(res.statusCode, 405);
+  assert.deepStrictEqual(res.body, { error: 'Only POST supported' });
 
-handler(req, res).catch(err => {
-  console.error('Handler error', err);
+  // Missing URL
+  await handler({ method: 'POST', body: {} }, res);
+  assert.strictEqual(res.statusCode, 400);
+  assert.deepStrictEqual(res.body, { error: 'Missing url' });
+
+  console.log('Tests passed');
+}
+
+runTests().catch(err => {
+  console.error(err);
+  process.exitCode = 1;
 });

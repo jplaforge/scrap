@@ -1,4 +1,4 @@
-const { default: chromium } = require('@sparticuz/chromium');
+const { default: chromium } = require('@sparticuz/chromium-min');
 const puppeteer = require('puppeteer-core');
 const { createWorker } = require('tesseract.js');
 const path = require("node:path");
@@ -30,9 +30,9 @@ module.exports = async (req, res) => {
     const buffer = await page.screenshot({ fullPage: true });
     await browser.close();
 
-    const worker = await createWorker({ langPath: path.join(__dirname, "..", "tessdata") });
-    await worker.loadLanguage("eng");
-    await worker.initialize("eng");
+    const worker = await createWorker();
+    await worker.loadLanguage('eng');
+    await worker.initialize('eng');
     const { data: { text } } = await worker.recognize(buffer);
     await worker.terminate();
 
